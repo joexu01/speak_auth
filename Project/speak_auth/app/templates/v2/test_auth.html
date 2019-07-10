@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+
+{% block page_content %}
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        {#    <title>Html5网页JavaScript录制MP3音频</title>#}
+        <meta charset="utf-8"/>
+        {#    <style>#}
+        {#        body {#}
+        {#            background: url("shiyuna.jpg") no-repeat;#}
+        {#            background-size: 60%;#}
+        {#        }#}
+        {#    </style>#}
+    </head>
+    <body>
+    {#    <h1>Html5网页JavaScript录制MP3音频</h1>#}
+    <h4>您的语音验证码是{{ dtw_number }}，请您录音读出这段数字并上传</h4>
+    <button onclick="funStart(this);" id="btnStart" disabled>录制</button> <!--onlick触发函数，disable禁用-->
+    <button onclick="funStop(this);" id="btnStop" disabled>停止</button>
+    <button onclick="funUpload(this);" id="btnUpload" disabled>上传</button>
+    <h4>调试信息：</h4>
+    <div id="recordingslist"></div>
+    <script src="{{ url_for('static', filename='recordmp3.js') }}"></script>
+    <script src="{{ url_for('static', filename='worker-realtime.js') }}"></script>
+    <script src="{{ url_for('static', filename='lame.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='jquery-3.3.1.min.js') }}"></script>
+
+    <script>
+        var recorder = new MP3Recorder
+        ({
+            debug: true,
+            funOk: function () {
+                btnStart.disabled = false;
+                log('初始化成功');
+            },
+            funCancel: function (msg) {
+                log(msg);
+                recorder = null;
+            }
+        });
+        var mp3Blob;
+
+
+        function funStart(button) {
+            btnStart.disabled = true;
+            btnStop.disabled = false;
+            btnUpload.disabled = true;
+            log('录音开始...');
+            recorder.start();
+        }
+
+        function funStop(button) {
+            recorder.stop();
+            btnStart.disabled = false;
+            btnStop.disabled = true;
+            btnUpload.disabled = false;
+            log('录音结束，MP3导出中...');
+            recorder.getMp3Blob(function (blob) {
+                log('MP3导出成功');
+
+                mp3Blob = blob;
+                var url = URL.createObjectURL(mp3Blob);
+                var div = document.createElement('div');/*document.createElement意思是创建一个什么类型的标签*/
+                var au = document.createElement('audio');/*audio标签定义声音*/
+                var hf = document.createElement('a');
+
+                au.controls = true;/*audio标签的controls属性规定浏览器提供播放控件*/
+                au.src = url;
+                hf.href = url;
+                hf.download = new Date().toISOString() + '.mp3';
+                hf.innerHTML = hf.download;
+                div.appendChild(au);/*appendChild添加节点*/
+                div.appendChild(hf);
+                recordingslist.appendChild(div);
+            });
+        }
+
+        function log(str) {
+            recordingslist.innerHTML += str + '<br/>';
+        }
+
+        function funUpload() {
+            var fd = new FormData();/*FormData对象用以添加键值对*/
+            var mp3Name = encodeURIComponent('audio_recording_' + new Date().getTime() + '.mp3');/*encodeURIComponent函数可把字符串作为URI组件进行编码*/
+            fd.append('mp3Name', mp3Name);
+            fd.append('file', mp3Blob);
+
+            var xhr = new XMLHttpRequest();/*XMLHttpRequest对象用于在后台和服务器交换数据*/
+            xhr.onreadystatechange = function () /*每当readystate改变时就触发这个函数*/ {
+                if (xhr.readyState == 4 && xhr.status == 200) /*4表示数据已经接收完毕,200表示一切正常*/
+                {
+                    recordingslist.innerHTML += '上传成功：<a href=" + xhr.responseText + " target="_blank">' + mp3Name + '</a>';
+                }
+            };
+
+            xhr.open('POST', '{{ url_for( 'main.auth_v2_3rd_step', uid=uid ) }}');
+            xhr.send(fd);
+
+            window.location.replace("{{ url_for( 'main.jump', uid=uid ) }}")
+
+        }
+
+        {#function funUpload()#}
+        {#{#}
+        {#    var fd = new FormData();#}
+        {#    var mp3Name = encodeURIComponent('audio_recording_' + new Date().getTime() + '.mp3');/*encodeURIComponent函数可把字符串作为URI组件进行编码*/#}
+        {#    fd.append('mp3Name', mp3Name);#}
+        {#    fd.append('file', mp3Blob);#}
+        {##}
+        {#   $.ajax({#}
+        {#       url:'http://127.0.0.1:8000/upload_file',/*在此输入链接*/#}
+        {#       type:"POST",#}
+        {#       data: fd,#}
+        {#       processData: false,/*不去处理发送的数据*/#}
+        {#       contentType: false,/*不要去设置Content-Type请求头*/#}
+        {#       success: function(data){#}
+        {#           alert("上传成功");#}
+        {#       },#}
+        {#       error: function() {#}
+        {#           alert("上传失败");#}
+        {#       }#}
+    </script>
+    </body>
+    </html>
+
+{% endblock %}

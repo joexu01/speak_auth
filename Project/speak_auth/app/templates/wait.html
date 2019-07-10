@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block page_content %}
+    <h3 style="text-align-all: center">请稍等，正在识别您的语音</h3>
+    <h4 style="text-align-all: center">系统将会自动跳转到结果页</h4>
+
+    <script type="text/javascript">
+        window.setTimeout(window.location.href = '{{ url_for('main.auth_results', uid=uid) }}', 7000);
+    </script>
+{% endblock %}

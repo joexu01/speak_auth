@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}检测结果-{{ person.person_name }}{% endblock %}
+
+{% block page_content %}
+<div class="page-header">
+    <img class="img-rounded profile-thumbnail" src="{{ user_img.url(person.avatar) }}" height="256" width="256">
+    <div class="profile-header">
+        <h1>{{ person.person_name }}</h1>
+
+        <h3>
+            UID:{{ person.uid }}
+        </h3>
+    </div>
+</div>
+
+    <table class="table table-hover table-bordered table-striped table-responsive" style="text-align: center; vertical-align: center">
+     <caption style="text-align: center" class="detail_font_size">Authentication Records</caption>
+    <tr><th style="text-align: center">认证时间</th><th style="text-align: center">DTW认证结果</th><th style="text-align: center">真人语音认证结果</th><th style="text-align: center">最终结果</th></tr>
+    {% for result in results %}
+        <tr>
+            <td style="vertical-align: middle">{{ moment(result.timestamp).format('YYYY-MM-DD HH:mm:SS') }}
+
+            {% if result.dtw_result %}
+            <td style="vertical-align: middle;background-color: mediumseagreen">通过</td>
+            {% else %}
+            <td style="vertical-align: middle;background-color: #ce8483">不通过</td>
+            {% endif %}
+
+            {% if result.svm_result %}
+            <td style="vertical-align: middle;background-color: mediumseagreen">通过</td>
+            {% else %}
+            <td style="vertical-align: middle;background-color: #ce8483">不通过</td>
+            {% endif %}
+
+            {% if result.dtw_result and result.svm_result %}
+            <td style="vertical-align: middle;background-color: mediumseagreen">通过</td>
+            {% else %}
+            <td style="vertical-align: middle;background-color: #ce8483">不通过</td>
+            {% endif %}
+        </tr>
+    {% endfor %}
+    </table>
+{% endblock %}

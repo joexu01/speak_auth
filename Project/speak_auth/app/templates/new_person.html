@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %}创建身份{% endblock %}
+
+{% block page_content %}
+<div class="page-header">
+    <h1>创建身份</h1>
+</div>
+    <br>
+    <h4>您的语音验证码是{{ dtw_number }}，请您录音读出这段数字并上传</h4>
+<div class="col-md-4">
+    {{ wtf.quick_form(form) }}
+</div>
+{% endblock %}

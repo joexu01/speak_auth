@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}SPEAK AUTH-{{ context.name }}{% endblock %}
+
+{% block page_content %}
+<div class="page-header">
+    <img class="img-rounded profile-thumbnail" src="{{ user_img.url(context.avatar) }}" height="256" width="256">
+    <div class="profile-header">
+        <h1>{{ context.name }}</h1>
+        <h2>邮箱：<a href="mailto:{{ context.email }}">{{ context.email }}</a></h2>
+        <h2>权限：{{ context.identity }}</h2>
+        {% if context.id == current_user.id %}
+            <a class="btn btn-default" href="{{ url_for('auth.edit_profile') }}">编辑个人资料</a>
+        {% endif %}
+        {% if current_user.is_administrator() and context.id != current_user.id %}
+            <a class="btn btn-danger" href="{{ url_for('auth.edit_profile_admin', user_id=context.id) }}">编辑资料(管理员)</a>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

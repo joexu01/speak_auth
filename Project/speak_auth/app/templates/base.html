@@ -1,0 +1,73 @@
+{% extends "bootstrap/base.html" %}
+
+{% block title %}SPEAK AUTH{% endblock %}
+
+{% block head %}
+{{ super() }}
+    <script src="{{ url_for('static', filename='lame.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='jquery-3.3.1.min.js') }}"></script>
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+{% endblock %}
+
+{% block navbar %}
+<div class="navbar navbar-default" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="{{ url_for('main.index') }}">SPEAK AUTH</a>
+        </div>
+        <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                <li><a href="{{ url_for('main.index') }}">主页</a></li>
+                    <li><a href="{{ url_for('main.new_person') }}">新建身份</a></li>
+                    <li><a href="{{ url_for('main.auth_1st_step') }}">身份验证</a></li>
+                    <li><a href="{{ url_for('main.new_person_v2_1st_step') }}">新建身份(网页录音)</a></li>
+                    <li><a href="{{ url_for('main.auth_v2_1st_step') }}">身份验证(网页录音)</a></li>
+{#                    <li><a href="{{ url_for('main.test') }}">TEST</a></li>#}
+
+            </ul>
+{#            <ul class="nav navbar-nav navbar-right">#}
+{#                {% if current_user.is_authenticated %}#}
+{#                <li class="dropdown">#}
+{#                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">账户<b class="caret"></b></a>#}
+{#                    <ul class="dropdown-menu">#}
+{#                        <li><a href="{{ url_for('auth.profile', user_id=current_user.id) }}">个人资料</a></li>#}
+{#                        <li><a href="{{ url_for('main.edit_profile') }}">编辑资料</a></li>#}
+{#                        <li><a href="{{ url_for('auth.change_password') }}">更换密码</a></li>#}
+{#                        <li><a href="{{ url_for('auth.change_email_request') }}">更换邮箱</a></li>#}
+{#                        <li><a href="{{ url_for('auth.logout') }}">注销</a></li>#}
+{#                    </ul>#}
+{#                </li>#}
+{#                {% else %}#}
+{#                <li><a href="{{ url_for('auth.login') }}">注册/登陆</a></li>#}
+{#                {% endif %}#}
+{#            </ul>#}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    {% for message in get_flashed_messages() %}
+    <div class="alert alert-info">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        {{ message }}
+    </div>
+    {% endfor %}
+
+    {% block page_content %}{% endblock %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+{{ moment.include_moment() }}
+{% endblock %}
