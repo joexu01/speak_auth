@@ -3,7 +3,7 @@ astroid==2.1.0
 attrs==19.1.0
 audioread==2.1.6
 backcall==0.1.0
-bleach==3.1.0
+bleach==3.1.4
 blinker==1.4
 cffi==1.12.2
 click==6.7
